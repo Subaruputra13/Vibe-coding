@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+build/
+
+# Bun
+bun.lockb
+
+# Drizzle (Optional: ignore if you want to manage migrations manually via push)
+# drizzle/
+
+# OS Files
+.DS_Store
+Thumbs.db
