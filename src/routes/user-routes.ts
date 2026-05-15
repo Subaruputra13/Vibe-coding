@@ -13,7 +13,7 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
         set.status = 400;
         return {
           status: "error",
-          message: error.message,
+          message: error.message || "Terjadi Kesalahan",
         };
       }
     },
