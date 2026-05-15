@@ -28,6 +28,15 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
         tags: ["Authentication"],
         description: "Register a new user to the system",
       },
+      response: {
+        200: t.Object({
+          status: t.String(),
+        }),
+        400: t.Object({
+          status: t.String(),
+          message: t.String(),
+        }),
+      },
     }
   )
   // Logic Login User
@@ -54,6 +63,15 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
         summary: "Login User",
         tags: ["Authentication"],
         description: "Login an existing user and get a session token",
+      },
+      response: {
+        200: t.Object({
+          data: t.String(),
+        }),
+        401: t.Object({
+          status: t.String(),
+          message: t.String(),
+        }),
       },
     }
   )
@@ -91,7 +109,23 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
           tags: ["Authentication"],
           description: "Get the profile of the currently authenticated user",
           security: [{ bearerAuth: [] }],
-        }
+        },
+        response: {
+          200: t.Object({
+            data: t.Object({
+              id: t.Number(),
+              name: t.String(),
+              email: t.String(),
+              createdAt: t.Any(),
+            }),
+          }),
+          401: t.Object({
+            error: t.String(),
+          }),
+          500: t.Object({
+            error: t.String(),
+          }),
+        },
       })
       // Logic Logout User
       .delete("/logout", async ({ token, set }) => {
@@ -118,6 +152,17 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
           tags: ["Authentication"],
           description: "Invalidate the current session token",
           security: [{ bearerAuth: [] }],
-        }
+        },
+        response: {
+          200: t.Object({
+            data: t.String(),
+          }),
+          401: t.Object({
+            error: t.String(),
+          }),
+          500: t.Object({
+            error: t.String(),
+          }),
+        },
       })
   );
