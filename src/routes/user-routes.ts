@@ -2,6 +2,7 @@ import { Elysia, t } from "elysia";
 import { registerUser, loginUser, getCurrentUser, logoutUser } from "../services/user-services";
 
 export const userRoutes = new Elysia({ prefix: "/api/users" })
+  // Logic Register User
   .post(
     "/",
     async ({ body, set }) => {
@@ -24,6 +25,7 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
       }),
     }
   )
+  // Logic Login User
   .post(
     "/login",
     async ({ body, set }) => {
@@ -45,6 +47,7 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
       }),
     }
   )
+  //Logic Get Current User & Logout User (Authentication)
   .group("", (app) =>
     app
       .derive(({ headers }) => {
@@ -53,6 +56,7 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
           token: auth?.startsWith("Bearer ") ? auth.substring(7) : null,
         };
       })
+      // Logic Get Current User
       .post("/current", async ({ token, set }) => {
         if (!token) {
           set.status = 401;
@@ -72,6 +76,7 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
           return { error: "Internal Server Error" };
         }
       })
+      // Logic Logout User
       .delete("/logout", async ({ token, set }) => {
         if (!token) {
           set.status = 401;
