@@ -23,6 +23,11 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
         email: t.String({ maxLength: 255 }),
         password: t.String({ minLength: 6, maxLength: 255 }),
       }),
+      detail: {
+        summary: "Register User",
+        tags: ["Authentication"],
+        description: "Register a new user to the system",
+      },
     }
   )
   // Logic Login User
@@ -45,6 +50,11 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
         email: t.String({ maxLength: 255 }),
         password: t.String({ minLength: 6, maxLength: 255 }),
       }),
+      detail: {
+        summary: "Login User",
+        tags: ["Authentication"],
+        description: "Login an existing user and get a session token",
+      },
     }
   )
   //Logic Get Current User & Logout User (Authentication)
@@ -75,6 +85,13 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
           set.status = 500;
           return { error: "Internal Server Error" };
         }
+      }, {
+        detail: {
+          summary: "Get Current User",
+          tags: ["Authentication"],
+          description: "Get the profile of the currently authenticated user",
+          security: [{ bearerAuth: [] }],
+        }
       })
       // Logic Logout User
       .delete("/logout", async ({ token, set }) => {
@@ -94,6 +111,13 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
 
           set.status = 500;
           return { error: "Internal Server Error" };
+        }
+      }, {
+        detail: {
+          summary: "Logout User",
+          tags: ["Authentication"],
+          description: "Invalidate the current session token",
+          security: [{ bearerAuth: [] }],
         }
       })
   );
