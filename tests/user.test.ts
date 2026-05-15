@@ -27,8 +27,8 @@ describe("User API", () => {
       );
 
       expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data.status).toBe("ok");
+      const registerData = (await response.json()) as any;
+      expect(registerData.status).toBe("ok");
     });
 
     it("should fail if email is already registered", async () => {
@@ -59,9 +59,9 @@ describe("User API", () => {
       );
 
       expect(response.status).toBe(400);
-      const data = await response.json();
-      expect(data.status).toBe("error");
-      expect(data.message).toBe("Email sudah terdaftar");
+      const errorData = (await response.json()) as any;
+      expect(errorData.status).toBe("error");
+      expect(errorData.message).toBe("Email sudah terdaftar");
     });
 
     it("should fail validation for invalid payload", async () => {
@@ -110,8 +110,8 @@ describe("User API", () => {
       );
 
       expect(response.status).toBe(200);
-      const result = await response.json();
-      expect(result.data).toBeDefined();
+      const loginResult = (await response.json()) as any;
+      expect(loginResult.data).toBeDefined();
     });
 
     it("should fail with wrong password", async () => {
@@ -157,7 +157,7 @@ describe("User API", () => {
           }),
         })
       );
-      const loginData = await loginRes.json();
+      const loginData = (await loginRes.json()) as any;
       token = loginData.data;
     });
 
@@ -172,8 +172,8 @@ describe("User API", () => {
       );
 
       expect(response.status).toBe(200);
-      const result = await response.json();
-      expect(result.data.email).toBe("auth@example.com");
+      const currentUserData = (await response.json()) as any;
+      expect(currentUserData.data.email).toBe("auth@example.com");
     });
 
     it("should fail to get current user with invalid token", async () => {
@@ -200,8 +200,8 @@ describe("User API", () => {
       );
 
       expect(logoutRes.status).toBe(200);
-      const logoutData = await logoutRes.json();
-      expect(logoutData.data).toBe("Berhasil Logout");
+      const logoutResult = (await logoutRes.json()) as any;
+      expect(logoutResult.data).toBe("Berhasil Logout");
 
       // Verify token is no longer valid
       const currentRes = await app.handle(
