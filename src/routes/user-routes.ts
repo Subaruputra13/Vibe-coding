@@ -23,6 +23,20 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
         email: t.String({ maxLength: 255 }),
         password: t.String({ minLength: 6, maxLength: 255 }),
       }),
+      detail: {
+        summary: "Register User",
+        tags: ["Authentication"],
+        description: "Register a new user to the system",
+      },
+      response: {
+        200: t.Object({
+          status: t.String(),
+        }),
+        400: t.Object({
+          status: t.String(),
+          message: t.String(),
+        }),
+      },
     }
   )
   // Logic Login User
@@ -45,6 +59,20 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
         email: t.String({ maxLength: 255 }),
         password: t.String({ minLength: 6, maxLength: 255 }),
       }),
+      detail: {
+        summary: "Login User",
+        tags: ["Authentication"],
+        description: "Login an existing user and get a session token",
+      },
+      response: {
+        200: t.Object({
+          data: t.String(),
+        }),
+        401: t.Object({
+          status: t.String(),
+          message: t.String(),
+        }),
+      },
     }
   )
   //Logic Get Current User & Logout User (Authentication)
@@ -75,6 +103,29 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
           set.status = 500;
           return { error: "Internal Server Error" };
         }
+      }, {
+        detail: {
+          summary: "Get Current User",
+          tags: ["Authentication"],
+          description: "Get the profile of the currently authenticated user",
+          security: [{ bearerAuth: [] }],
+        },
+        response: {
+          200: t.Object({
+            data: t.Object({
+              id: t.Number(),
+              name: t.String(),
+              email: t.String(),
+              createdAt: t.Any(),
+            }),
+          }),
+          401: t.Object({
+            error: t.String(),
+          }),
+          500: t.Object({
+            error: t.String(),
+          }),
+        },
       })
       // Logic Logout User
       .delete("/logout", async ({ token, set }) => {
@@ -95,5 +146,23 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
           set.status = 500;
           return { error: "Internal Server Error" };
         }
+      }, {
+        detail: {
+          summary: "Logout User",
+          tags: ["Authentication"],
+          description: "Invalidate the current session token",
+          security: [{ bearerAuth: [] }],
+        },
+        response: {
+          200: t.Object({
+            data: t.String(),
+          }),
+          401: t.Object({
+            error: t.String(),
+          }),
+          500: t.Object({
+            error: t.String(),
+          }),
+        },
       })
   );
