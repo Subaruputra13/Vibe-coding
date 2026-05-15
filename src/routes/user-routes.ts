@@ -45,37 +45,50 @@ export const userRoutes = new Elysia({ prefix: "/api/users" })
       }),
     }
   )
-  .post("/current", async ({ headers, set }) => {
-    try {
-      const auth = headers.authorization;
-      if (!auth || !auth.startsWith("Bearer ")) {
-        throw new Error("Unauthorized");
-      }
+  .group("", (app) =>
+    app
+      .derive(({ headers }) => {
+        const auth = headers.authorization;
+        return {
+          token: auth?.startsWith("Bearer ") ? auth.substring(7) : null,
+        };
+      })
+      .post("/current", async ({ token, set }) => {
+        if (!token) {
+          set.status = 401;
+          return { error: "Unauthorized" };
+        }
 
-      const token = auth.substring(7);
-      const user = await getCurrentUser(token);
-      return { data: user };
-    } catch (error: any) {
-      set.status = 401;
-      return {
-        error: "Unauthorized",
-      };
-    }
-  })
-  .delete("/logout", async ({ headers, set }) => {
-    try {
-      const auth = headers.authorization;
-      if (!auth || !auth.startsWith("Bearer ")) {
-        throw new Error("Unauthorized");
-      }
+        try {
+          const user = await getCurrentUser(token);
+          return { data: user };
+        } catch (error: any) {
+          if (error.message === "Unauthorized") {
+            set.status = 401;
+            return { error: "Unauthorized" };
+          }
 
-      const token = auth.substring(7);
-      const message = await logoutUser(token);
-      return { data: message };
-    } catch (error: any) {
-      set.status = 401;
-      return {
-        error: "Unauthorized",
-      };
-    }
-  });
+          set.status = 500;
+          return { error: "Internal Server Error" };
+        }
+      })
+      .delete("/logout", async ({ token, set }) => {
+        if (!token) {
+          set.status = 401;
+          return { error: "Unauthorized" };
+        }
+
+        try {
+          const message = await logoutUser(token);
+          return { data: message };
+        } catch (error: any) {
+          if (error.message === "Unauthorized") {
+            set.status = 401;
+            return { error: "Unauthorized" };
+          }
+
+          set.status = 500;
+          return { error: "Internal Server Error" };
+        }
+      })
+  );
